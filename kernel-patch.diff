@@ -1,0 +1,104 @@
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index fb45615..873867b 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -2265,6 +2265,34 @@ static const struct file_operations proc_coredump_filter_operations = {
+ };
+ #endif
+ 
++#ifdef CONFIG_SECURITY_LSMSB
++extern int lsmsb_sandbox_install(struct task_struct *task,
++				 const char __user *buf,
++				 size_t count);
++
++static ssize_t proc_sandbox_write(struct file *file,
++				  const char __user *buf,
++				  size_t count,
++				  loff_t *ppos)
++{
++	struct task_struct *task;
++	int return_code;
++
++	task = get_proc_task(file->f_dentry->d_inode);
++	if (!task)
++		return -ESRCH;
++
++	return_code = lsmsb_sandbox_install(task, buf, count);
++	put_task_struct(task);
++
++	return return_code;
++}
++static const struct file_operations proc_sandbox_operations = {
++	.read		= NULL,
++	.write		= proc_sandbox_write,
++};
++#endif
++
+ /*
+  * /proc/self:
+  */
+@@ -2542,6 +2570,9 @@ static const struct pid_entry tgid_base_stuff[] = {
+ #ifdef CONFIG_TASK_IO_ACCOUNTING
+ 	INF("io",	S_IRUGO, proc_tgid_io_accounting),
+ #endif
++#ifdef CONFIG_SECURITY_LSMSB
++	REG("sandbox", S_IWUSR, proc_sandbox_operations),
++#endif
+ };
+ 
+ static int proc_tgid_base_readdir(struct file * filp,
+diff --git a/security/Kconfig b/security/Kconfig
+index bb24477..8ee328d 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -136,6 +136,7 @@ config SECURITY_DEFAULT_MMAP_MIN_ADDR
+ source security/selinux/Kconfig
+ source security/smack/Kconfig
+ source security/tomoyo/Kconfig
++source security/lsmsb/Kconfig
+ 
+ source security/integrity/ima/Kconfig
+ 
+diff --git a/security/Makefile b/security/Makefile
+index fa77021..d8ff6ad 100644
+--- a/security/Makefile
++++ b/security/Makefile
+@@ -6,6 +6,7 @@ obj-$(CONFIG_KEYS)			+= keys/
+ subdir-$(CONFIG_SECURITY_SELINUX)	+= selinux
+ subdir-$(CONFIG_SECURITY_SMACK)		+= smack
+ subdir-$(CONFIG_SECURITY_TOMOYO)        += tomoyo
++subdir-$(CONFIG_SECURITY_LSMSB)         += lsmsb
+ 
+ # always enable default capabilities
+ obj-y		+= commoncap.o
+@@ -17,6 +18,7 @@ obj-$(CONFIG_SECURITYFS)		+= inode.o
+ obj-$(CONFIG_SECURITY_SELINUX)		+= selinux/built-in.o
+ obj-$(CONFIG_SECURITY_SMACK)		+= smack/built-in.o
+ obj-$(CONFIG_SECURITY_TOMOYO)		+= tomoyo/built-in.o
++obj-$(CONFIG_SECURITY_LSMSB)		+= lsmsb/built-in.o
+ obj-$(CONFIG_SECURITY_ROOTPLUG)		+= root_plug.o
+ obj-$(CONFIG_CGROUP_DEVICE)		+= device_cgroup.o
+ 
+diff --git a/security/lsmsb/Kconfig b/security/lsmsb/Kconfig
+new file mode 100644
+index 0000000..d5a3c74
+--- /dev/null
++++ b/security/lsmsb/Kconfig
+@@ -0,0 +1,6 @@
++config SECURITY_LSMSB
++	bool "Linux Security Modules Sandbox"
++	default n
++	help
++	  TODO
++
+diff --git a/security/lsmsb/Makefile b/security/lsmsb/Makefile
+new file mode 100644
+index 0000000..cdf2f17
+--- /dev/null
++++ b/security/lsmsb/Makefile
+@@ -0,0 +1,5 @@
++#
++# Makefile for LSMSB
++#
++
++obj-$(CONFIG_SECURITY_LSMSB) := lsmsb.o

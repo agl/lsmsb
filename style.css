@@ -1,0 +1,137 @@
+body {
+  margin-left: 5px;
+  margin-top: 0;
+  max-width: 65em;
+  text-align: justify;
+}
+
+h1 {
+  font-family: "Georgia";
+  font-weight: normal;
+  color: #fff;
+  background-color: #555;
+  margin-top: 0px;
+  margin-left: -5px;
+  padding-bottom: 5px;
+  padding-left: 0.66em;
+  padding-top: 5px;
+  width: 100%;
+}
+
+.sectionnumber {
+  display: inline;
+  font-weight: bold;
+}
+
+.sectionnumber:after {
+  content: ".";
+}
+
+.codename {
+  margin-top: 1em;
+}
+
+.codename:before {
+  content: "〈";
+  font-weight: bold;
+}
+
+.codename:after {
+  content: "〉 ≡";
+  font-weight: bold;
+}
+
+.code {
+  font-family: monospace;
+  margin-left: 2em;
+  border-left: solid 2px gray;
+  padding-left: 1em;
+  margin-bottom: 1em;
+}
+
+.codeline {
+  white-space: pre;
+}
+
+.ref {
+  white-space: pre;
+}
+
+.outputfile {
+  display: inline;
+  font-variant: small-caps;
+}
+
+.ref {
+  font-family: monospace;
+}
+
+.ref .reftext:before {
+  font-weight: bold;
+  content: "〈";
+}
+
+.ref:after {
+  font-weight: bold;
+  content: "〉";
+}
+
+.ref .reftext {
+  font-family: normal;
+}
+
+.keyword {
+  color: #007;
+}
+
+.string {
+  color: #070;
+}
+
+.comment {
+  color: #700;
+}
+
+.preprocessor {
+  color: #707;
+}
+
+table {
+  margin-left: 2em;
+}
+
+th {
+  text-align: left;
+  font-weight: normal;
+  font-variant: small-caps;
+}
+
+tr > th {
+  border-bottom: 1px solid black;
+  margin-bottom: 0.5em;
+}
+
+td {
+  vertical-align: top;
+  padding-right: 1em;
+}
+
+.sectionrefs:before {
+  content: "Used in ";
+}
+
+.sectionrefs {
+  margin-left: 2em;
+  font-size: 0.75em;
+  color: gray;
+}
+
+.sectionrefs .fileref {
+  font-family: monospace;
+  font-size: 1.2em;
+  color: gray;
+}
+
+.sectionrefs .sectionref {
+  color: gray;
+}

@@ -1,0 +1,42 @@
+A Linux Sandboxing Scheme
+
+This is LSMSB, a sandboxing scheme for Linux based on the ideas of the OS X
+sandbox (which, in turn, was inspired by TrustedBSD and FreeBSD).
+
+Imagine that you're working on a university computer and you get a binary which
+promises to do some fiendishly complex calculation, reading from a file ./input
+and writing to a file ./output. It also talks to a specific server to access a
+pre-computed lookup table. You want to run it, but you don't want to have to
+trust that it won't do anything malicious (save giving the wrong answer).
+
+This code is incomplete, but currently you can take a sandbox specification
+like this:
+
+filter dentry-open {
+  constants {
+    var etc-prefix bytestring = "/etc/";
+  }
+
+  ldc r2,etc-prefix;
+  isprefixof r2,r2,r0;
+  jc r2,#fail;
+  ldi r0,1;
+  ret r0;
+#fail:
+  ldi r0,0;
+  ret r0;
+}
+
+... and use it to remove access to /etc.
+
+*** This code functions, but is incomplete ***
+
+It's written in a literate programming style, but the derived sources are
+included so that you don't have to bother with that in order to build. You'll
+need a recent (> 2.6.30-rc1) kernel in order to apply the included patch. Once
+you've applied the patch, drop lsmsb.c into security/lsmsb and rebuild.
+
+You can assemble a sandbox file with:
+  ./lsmsb-as sandbox-input.sb > sandbox
+And then run a shell in the sandbox with:
+  ./lsmsb-install sandbox
