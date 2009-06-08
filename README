@@ -40,3 +40,5 @@ You can assemble a sandbox file with:
   ./lsmsb-as sandbox-input.sb > sandbox
 And then run a shell in the sandbox with:
   ./lsmsb-install sandbox
+
+To read the code, see http://www.imperialviolet.org/binary/lsmsb.html
